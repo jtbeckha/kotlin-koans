@@ -16,7 +16,6 @@ data class MyDate(val year: Int, val month: Int, val dayOfMonth: Int): Comparabl
         return 0
     }
 
-
 }
 
 operator fun MyDate.rangeTo(other: MyDate): DateRange = DateRange(this, other)
@@ -27,4 +26,18 @@ enum class TimeInterval {
     YEAR
 }
 
-class DateRange(override val start: MyDate, override val endInclusive: MyDate): ClosedRange<MyDate>
+class DateRange(override val start: MyDate, override val endInclusive: MyDate): ClosedRange<MyDate>, Iterable<MyDate> {
+    override fun iterator(): Iterator<MyDate> {
+        return object : Iterator<MyDate> {
+
+            var date = start
+
+            override fun hasNext(): Boolean = this.date <= endInclusive
+            override fun next(): MyDate {
+                val retVal = date
+                date = date.nextDay()
+                return retVal
+            }
+        }
+    }
+}
